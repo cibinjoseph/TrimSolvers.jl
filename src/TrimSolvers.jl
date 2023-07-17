@@ -4,6 +4,9 @@
     and `res` is the residual vector.
 """
 
+module TrimSolvers
+export trim_newton
+
 using LinearAlgebra
 
 """
@@ -68,4 +71,5 @@ function trim_newton(system, x0, u0, nres::Int;
     end
 
     return u_history, res_history
+end
 end

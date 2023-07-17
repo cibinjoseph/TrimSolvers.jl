@@ -1,4 +1,4 @@
-using trimSolvers
+using TrimSolvers
 using Test
 
 @testset "trim_newton" begin
