@@ -69,10 +69,3 @@ function trim_newton(system, x0, u0, nres::Int;
 
     return u_history, res_history
 end
-
-function system(x, u)
-    y = zeros(2)
-    y[1] = u[1]^2 + u[2]^2 - 4.0
-    y[2] = 4*u[1]^2 - u[2]^2 - 4.0
-    return y
-end
