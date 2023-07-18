@@ -72,4 +72,31 @@ function trim_newton(system, x0, u0, nres::Int;
 
     return u_history, res_history
 end
+
+"""
+    Computes the left pseudo-inverse for A.
+"""
+function left_inverse(A; w=[0.0])
+    if norm(w) < 1e-2
+        inv_A = (A' * A) \ A'
+    else
+        W = Diagonal(w)
+        inv_A = (A' * W * A) \ A' * W
+    end
+    return inv_A
+end
+
+"""
+    Computes the right pseudo-inverse for A. Also known as the Moore-Penrose inverse.
+"""
+function right_inverse(A; w=[0.0])
+    if norm(w) < 1e-2
+        inv_A = A' * inv(A * A')
+    else
+        inv_W = Diagonal(w.^(-1))
+        inv_A = inv_W * A' * inv(A * inv_W * A')
+    end
+    return inv_A
+end
+
 end
