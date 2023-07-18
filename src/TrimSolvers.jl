@@ -10,13 +10,13 @@ export trim_newton
 using LinearAlgebra
 
 """
-    Implements Gauss-Newton fixed-point iteration method
-    for a system that could be over-determined or under-determined.
-    This means the no. of residuals need not be same as controls.
+    Implements Gauss-Newton fixed-point iteration method for a system that could be under-determined, determined or over-determined.
+    For the over-determined case, provide a weighing matrix.
 """
 function trim_newton(system, x0, u0, nres::Int;
-        u_min=[0.0], u_max=[0.0], relx=0.0, perturb_scale=0.005, max_iter=500,
-        res_tol=1e-12, u_tol=1e-12)
+        u_min=[0.0], u_max=[0.0], w=[0],
+        relx=0.0, perturb_scale=0.005, max_iter=500,
+        res_tol=1e-12, u_tol=1e-12, boundary_control=false)
 
     u_history = []
     res_history = []
@@ -61,10 +61,22 @@ function trim_newton(system, x0, u0, nres::Int;
             Jac[:, iu] = (res-res_current)./h
         end
 
-        u_next = u_current - Jac \ res_current
+        u_next = u_current - pinv(Jac; w=w) * res_current
 
         if norm(u_next-u_current) < u_tol
             break
+        end
+
+        # Arbitrarily set back value 5% from boundary if boundary is violated
+        if boundary_control
+            for iu = 1:n
+                if u_next[iu] > u_max[iu]
+                    u_next[iu] -= range_u[iu]*0.05
+                end
+                if u_next[iu] < u_min[iu]
+                    u_next[iu] += range_u[iu]*0.05
+                end
+            end
         end
 
         u_current = u_next*(1.0-relx) + u_current*relx
