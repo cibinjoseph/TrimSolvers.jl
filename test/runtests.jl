@@ -15,12 +15,12 @@ using Test
     @test u[end] ≈ [1.264911, 1.549193] atol=1e-6
 end
 
-@testset "inverse" begin
+@testset "pinv" begin
     A = zeros(2, 3)
     A[1, :] = [1.0, 2.0, 3.0]
     A[2, :] = [3.0, 4.0, 5.0]
-    rinv_A = ts.right_inverse(A)
-    linv_A = ts.left_inverse(A')
+    rinv_A = ts.pinv(A)
+    linv_A = ts.pinv(A')
 
     rinv_A_true = zeros(3, 2)
     rinv_A_true[:, 1] = [-3.5, -0.5, 2.5]
