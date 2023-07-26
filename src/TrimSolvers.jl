@@ -16,7 +16,8 @@ using LinearAlgebra
 function trim_newton(system, x0, u0, nres::Int;
         u_min=[0.0], u_max=[0.0], w=[0],
         relx=0.0, perturb_scale=0.005, max_iter=500,
-        res_tol=1e-12, u_tol=1e-12, boundary_control=false)
+        res_tol=1e-12, u_tol=1e-12, boundary_control=false,
+        log_file=false)
 
     u_history = []
     res_history = []
@@ -24,6 +25,10 @@ function trim_newton(system, x0, u0, nres::Int;
     u_current = u0
     n = length(u0)
     Jac = zeros(nres, n)
+
+    if log_file
+        fh = open("trim.log", "w")
+    end
 
     # Perturbation magnitude as a percentage of the range
     range_u = u_max-u_min
@@ -38,6 +43,12 @@ function trim_newton(system, x0, u0, nres::Int;
         push!(u_history, u_current)
         res_current = system(x0, u_current)
         push!(res_history, res_current)
+
+        if log_file
+            println(fh, "i = $i")
+            println(fh, "u = $(u_current)")
+            println(fh, "res = $(res_current)")
+        end
 
         if norm(res_current) < res_tol
             break
@@ -82,6 +93,9 @@ function trim_newton(system, x0, u0, nres::Int;
         u_current = u_next*(1.0-relx) + u_current*relx
     end
 
+    if log_file
+        close(fh)
+    end
     return u_history, res_history
 end
 
