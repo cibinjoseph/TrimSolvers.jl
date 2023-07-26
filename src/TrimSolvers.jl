@@ -45,6 +45,7 @@ function trim_newton(system, x0, u0, nres::Int;
         push!(res_history, res_current)
 
         if log_file
+	    @info "Writing to trim.log ..."
             println(fh, "i = $i")
             println(fh, "u = $(u_current)")
             println(fh, "res = $(res_current)")
