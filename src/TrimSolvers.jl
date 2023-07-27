@@ -16,7 +16,7 @@ using LinearAlgebra
 function trim_newton(system, x0, u0, nres::Int;
         u_min=[0.0], u_max=[0.0], w=[0],
         relx=0.0, perturb_scale=0.005, max_iter=500,
-        res_tol=1e-12, u_tol=1e-12, boundary_control=false,
+        res_tol=1e-6, u_tol=1e-6, boundary_control=false,
         log_file=false)
 
     u_history = []
