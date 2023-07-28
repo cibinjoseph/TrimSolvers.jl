@@ -85,9 +85,17 @@ function trim_newton(system, x0, u0, nres::Int;
         if boundary_control
             for iu = 1:n
                 if u_next[iu] > u_max[iu]
+                    if log_file
+                        println(fh, "Upper boundary hit by control $iu")
+                        println(fh, u_next)
+                    end
                     u_next[iu] -= range_u[iu]*0.05
                 end
                 if u_next[iu] < u_min[iu]
+                    if log_file
+                        println(fh, "Lower boundary hit by control $iu")
+                        println(fh, u_next)
+                    end
                     u_next[iu] += range_u[iu]*0.05
                 end
             end
